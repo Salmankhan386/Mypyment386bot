@@ -27,7 +27,7 @@ def send_welcome(message):
         "🔸 **Option 3: USDT (TRC20)**\n"
         "➔ Address: `TEqfLhNxgmN1ux7LnGuWZq3Hy39K12XQiY`\n\n"
         "⚠️ **Step 2:** After payment, send your transaction screenshot directly to this bot.\n"
-        "I will verify and send you the official VIP Access Link immediately!"
+        "I will verify and send your VIP access button immediately!"
     )
     bot.send_message(message.chat.id, payment_text, parse_mode='Markdown')
 
@@ -54,7 +54,7 @@ def handle_action(call):
     
     if call.data.startswith('approve_'):
         try:
-            # NO EXPIRY LIMIT: Kisi qism ki koi member limit ya time limit nahi hai
+            # Aik aisa link generate hoga jo kabi expire nahi hoga (Unlimited Uses)
             invite_link = bot.create_chat_invite_link(
                 CHANNEL_ID,
                 member_limit=None,
@@ -62,12 +62,21 @@ def handle_action(call):
                 creates_join_request=False
             ).invite_link
             
-            # Message text bilkul badal diya hai taake pata chale naya code chal raha hai
-            bot.send_message(client_id, f"🎉 **Congratulations! Your Payment is Approved!**\n\nClick the permanent link below to join the VIP Channel:\n👇👇👇\n{invite_link}\n\n🟢 *Yeh link hamesha active rahega.*")
-            bot.answer_callback_query(call.id, "Permanent Link Sent!")
-            bot.edit_message_text(f"✅ Approved & Permanent Link Sent to: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
+            # LINK KO BUTTON MEIN BADAL DIYA HAIN 👇
+            user_markup = InlineKeyboardMarkup()
+            user_markup.add(InlineKeyboardButton("Join VIP Channel 🚀", url=invite_link))
+            
+            # User ko text ke sath button chala jayega
+            bot.send_message(
+                client_id, 
+                "🎉 **Congratulations! Your Payment is Approved!**\n\nClick the button below to join the VIP Channel instantly:",
+                reply_markup=user_markup
+            )
+            
+            bot.answer_callback_query(call.id, "Button Sent to User!")
+            bot.edit_message_text(f"✅ Approved & Button Sent to: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
         except Exception as e:
-            bot.send_message(ADMIN_ID, f"❌ Link Generation Error: {e}")
+            bot.send_message(ADMIN_ID, f"❌ Button Generation Error: {e}")
 
     elif call.data.startswith('reject_'):
         try:
