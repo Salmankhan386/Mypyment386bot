@@ -4,7 +4,6 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # --- CONFIGURATION ---
-# BRAND NEW BOT TOKEN INSTALLED
 API_TOKEN = '8843652755:AAEgPsT-ZVQcYnkH9ZmlP2OdVtpW1PViLp4' 
 ADMIN_ID = 6724590786  # Muhammad Salman ID
 CHANNEL_ID = '-1003856215791' # Spike VIP Signals ID
@@ -28,7 +27,7 @@ def send_welcome(message):
         "🔸 **Option 3: USDT (TRC20)**\n"
         "➔ Address: `TEqfLhNxgmN1ux7LnGuWZq3Hy39K12XQiY`\n\n"
         "⚠️ **Step 2:** After payment, send your transaction screenshot directly to this bot.\n"
-        "I will verify and send you a VIP Join Link immediately!"
+        "I will verify and you will be added directly!"
     )
     bot.send_message(message.chat.id, payment_text, parse_mode='Markdown')
 
@@ -51,19 +50,23 @@ def handle_screenshot(message):
 
 @bot.callback_query_handler(func=lambda call: call.data.startswith(('approve_', 'reject_')))
 def handle_action(call):
-    client_id = call.data.split('_')[1]
+    client_id = int(call.data.split('_')[1])
     
     if call.data.startswith('approve_'):
         try:
-            invite_link = bot.create_chat_invite_link(CHANNEL_ID, creates_join_request=False, member_limit=1).invite_link
-            bot.send_message(client_id, f"✅ **Approved!**\n\nClick here to join the VIP Channel:\n{invite_link}\n\n⚠️ *Note:* Yeh link sirf aik martaba kaam karega.")
-            bot.answer_callback_query(call.id, "Link Sent!")
-            bot.edit_message_text(f"✅ Approved for {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
+            # DIRECT APPROVE: Yeh line user ko bina kisi link ke sidha andar daal degi
+            bot.approve_chat_join_request(CHANNEL_ID, client_id)
+            
+            bot.send_message(client_id, "✅ **Approved!**\n\nAapko VIP Channel mein add kar diya gaya hai. Apna Telegram check karein, channel aapki chat list mein aa chuka hoga! 🎉")
+            bot.answer_callback_query(call.id, "User Approved & Added!")
+            bot.edit_message_text(f"✅ Approved and Directly Added: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
         except Exception as e:
-            bot.send_message(ADMIN_ID, f"❌ Link Error: {e}")
+            bot.send_message(ADMIN_ID, f"❌ Direct Add Error: {e}\n\n⚠️ *Note:* Ensure karein ke user ne channel par 'Join Request' bheji hui ho.")
 
     elif call.data.startswith('reject_'):
         try:
+            # Decline request if needed
+            bot.decline_chat_join_request(CHANNEL_ID, client_id)
             bot.send_message(client_id, "❌ **Rejected.** Payment not verified.")
             bot.answer_callback_query(call.id, "Rejected!")
             bot.edit_message_text(f"❌ Rejected for {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
@@ -72,11 +75,10 @@ def handle_action(call):
 
 # --- RUN ---
 if __name__ == "__main__":
-    print("Bot is starting with the brand new bot token...")
+    print("Bot is starting...")
     try:
-        # Clear any left-over webhooks instantly
         bot.delete_webhook(drop_pending_updates=True)
-        print("Webhook cleared successfully.")
+        print("Webhook cleared.")
     except Exception as e:
         print(f"Webhook error: {e}")
         
@@ -87,5 +89,5 @@ if __name__ == "__main__":
             print("Starting polling...")
             bot.polling(none_stop=True)
         except Exception as e:
-            print(f"Polling error caught: {e}")
+            print(f"Polling error: {e}")
             time.sleep(5)
