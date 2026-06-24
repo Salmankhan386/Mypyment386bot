@@ -8,6 +8,9 @@ API_TOKEN = '8843652755:AAEgPsT-ZVQcYnkH9ZmlP2OdVtpW1PViLp4'
 ADMIN_ID = 6724590786  # Muhammad Salman ID
 CHANNEL_ID = '-1003856215791' # Spike VIP Signals ID
 
+# YOUR PERMANENT LINK INTEGRATED HERE
+PERMANENT_CHANNEL_LINK = "https://t.me/+gMozaBlqg4E1NzBk" 
+
 bot = telebot.TeleBot(API_TOKEN)
 
 # --- HANDLERS ---
@@ -54,19 +57,10 @@ def handle_action(call):
     
     if call.data.startswith('approve_'):
         try:
-            # Aik aisa link generate hoga jo kabi expire nahi hoga (Unlimited Uses)
-            invite_link = bot.create_chat_invite_link(
-                CHANNEL_ID,
-                member_limit=None,
-                expire_date=None,
-                creates_join_request=False
-            ).invite_link
-            
-            # LINK KO BUTTON MEIN BADAL DIYA HAIN 👇
+            # Solid Button with your specific link
             user_markup = InlineKeyboardMarkup()
-            user_markup.add(InlineKeyboardButton("Join VIP Channel 🚀", url=invite_link))
+            user_markup.add(InlineKeyboardButton("Join VIP Channel 🚀", url=PERMANENT_CHANNEL_LINK))
             
-            # User ko text ke sath button chala jayega
             bot.send_message(
                 client_id, 
                 "🎉 **Congratulations! Your Payment is Approved!**\n\nClick the button below to join the VIP Channel instantly:",
@@ -76,7 +70,7 @@ def handle_action(call):
             bot.answer_callback_query(call.id, "Button Sent to User!")
             bot.edit_message_text(f"✅ Approved & Button Sent to: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
         except Exception as e:
-            bot.send_message(ADMIN_ID, f"❌ Button Generation Error: {e}")
+            bot.send_message(ADMIN_ID, f"❌ Button Error: {e}")
 
     elif call.data.startswith('reject_'):
         try:
@@ -95,7 +89,6 @@ if __name__ == "__main__":
         pass
         
     time.sleep(1)
-    
     while True:
         try:
             print("Starting polling...")
