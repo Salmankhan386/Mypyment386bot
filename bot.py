@@ -54,16 +54,18 @@ def handle_action(call):
     
     if call.data.startswith('approve_'):
         try:
-            # PERMANENT LINK SOLUTION: Yeh link na expire hoga na user limit lagayega
-            # User bas ispar click karke seedha add ho jayega bina join request ke jhanjhat ke
+            # NO EXPIRY LIMIT: Kisi qism ki koi member limit ya time limit nahi hai
             invite_link = bot.create_chat_invite_link(
-                CHANNEL_ID, 
+                CHANNEL_ID,
+                member_limit=None,
+                expire_date=None,
                 creates_join_request=False
             ).invite_link
             
-            bot.send_message(client_id, f"✅ **Approved!**\n\nClick the link below to enter the VIP Channel:\n\n🚀 {invite_link}")
-            bot.answer_callback_query(call.id, "Link Sent!")
-            bot.edit_message_text(f"✅ Approved and Link Sent to: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
+            # Message text bilkul badal diya hai taake pata chale naya code chal raha hai
+            bot.send_message(client_id, f"🎉 **Congratulations! Your Payment is Approved!**\n\nClick the permanent link below to join the VIP Channel:\n👇👇👇\n{invite_link}\n\n🟢 *Yeh link hamesha active rahega.*")
+            bot.answer_callback_query(call.id, "Permanent Link Sent!")
+            bot.edit_message_text(f"✅ Approved & Permanent Link Sent to: {client_id}", chat_id=ADMIN_ID, message_id=call.message.message_id)
         except Exception as e:
             bot.send_message(ADMIN_ID, f"❌ Link Generation Error: {e}")
 
