@@ -4,11 +4,12 @@ import telebot
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # --- CONFIGURATION ---
-API_TOKEN = '8843652755:AAEgPsT-ZVQcYnkH9ZmlP2OdVtpW1PViLp4' 
+# NEW FRESH TOKEN INSTALLED HERE 👇
+API_TOKEN = '8843652755:AAHkG_jECe8frkrH2RKxK5wHpB3FvpYe_W0' 
 ADMIN_ID = 6724590786  # Muhammad Salman ID
 CHANNEL_ID = '-1003856215791' # Spike VIP Signals ID
 
-# YOUR PERMANENT LINK INTEGRATED HERE
+# YOUR PERMANENT LINK FOR THE BUTTON
 PERMANENT_CHANNEL_LINK = "https://t.me/+gMozaBlqg4E1NzBk" 
 
 bot = telebot.TeleBot(API_TOKEN)
@@ -57,7 +58,7 @@ def handle_action(call):
     
     if call.data.startswith('approve_'):
         try:
-            # Solid Button with your specific link
+            # Bulletproof Button Setup
             user_markup = InlineKeyboardMarkup()
             user_markup.add(InlineKeyboardButton("Join VIP Channel 🚀", url=PERMANENT_CHANNEL_LINK))
             
@@ -82,9 +83,11 @@ def handle_action(call):
 
 # --- RUN ---
 if __name__ == "__main__":
-    print("Bot is starting...")
+    print("Bot is starting with the new fresh token...")
     try:
+        # Purane tokens ya webhooks ko database se flush out karne ke liye
         bot.delete_webhook(drop_pending_updates=True)
+        print("Webhook flushed successfully.")
     except Exception as e:
         pass
         
